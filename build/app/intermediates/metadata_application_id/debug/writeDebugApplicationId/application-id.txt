@@ -1,0 +1,1 @@
+us.binarychaos.firebase_auth

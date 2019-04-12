@@ -1,0 +1,4 @@
+#Thu Apr 11 22:53:38 PDT 2019
+base.0=C\:\\Users\\aawhi\\Documents\\Practice Apps\\9 Instagram Clone\\build\\app\\intermediates\\transforms\\dexMerger\\debug\\0
+path.0=classes.dex
+renamed.0=classes.dex
