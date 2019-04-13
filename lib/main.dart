@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth_example/utils/root_page.dart';
 import 'package:firebase_auth_example/ui/screens/feed.dart';
+import 'package:firebase_auth_example/ui/screens/login.dart';
 
 void main() => runApp(MyApp());
 
@@ -18,13 +18,23 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
 
       ),
-      home: RootPage(auth: auth,),
-      routes: {
-        '/root' : (context) => RootPage(auth: auth,),
-        '/feed' : (context) => Feed(),
-      },
+      home: _handleCurrentScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
 }
 
+Widget _handleCurrentScreen() {
+  return new StreamBuilder<FirebaseUser>(
+      stream: FirebaseAuth.instance.onAuthStateChanged,
+      builder: (BuildContext context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return new Center(child: new CircularProgressIndicator());
+        } else {
+          if (snapshot.hasData) {
+            return Feed(auth: auth,);
+          }
+          return LoginPage(auth: auth,);
+        }
+      });
+}

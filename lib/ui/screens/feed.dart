@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth_example/utils/root_page.dart';
 
 class Feed extends StatefulWidget {
   final FirebaseAuth auth;
@@ -37,10 +36,6 @@ class _FeedState extends State<Feed> {
                   child: Text('Sign Out'),
                   onPressed: () {
                     _signOut();
-                    Navigator.push(
-                        context,
-                        new MaterialPageRoute(
-                            builder: (BuildContext context) => RootPage(auth: widget.auth,)));
                   },
                 ),
               ),
