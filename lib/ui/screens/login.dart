@@ -3,13 +3,14 @@ import 'package:firebase_auth_example/data/languages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'feed.dart';
-
-final GoogleSignIn _googleSignIn = GoogleSignIn();
+import 'forgot_password.dart';
+import 'package:firebase_auth_example/utils/messages.dart';
 
 enum FormMode { LOGIN, SIGNUP }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.title, this.auth, this.onSignedIn}) : super(key: key);
+  MyHomePage({Key key, this.title, this.auth, this.onSignedIn})
+      : super(key: key);
 
   final String title;
   final FirebaseAuth auth;
@@ -20,24 +21,22 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Instagram',
+        title: Text(
+          'Instagram',
         ),
       ),
       body: LoginPage(
         auth: widget.auth,
       ),
-
     );
   }
 }
 
 class LoginPage extends StatefulWidget {
-
   final FirebaseAuth auth;
 
   LoginPage({this.auth});
@@ -49,18 +48,17 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   String dropDownValue = 'English (United States)';
   String _email = '';
-  String _password = '';
-  String _passwordVerification = '';
+  String _password;
   String _errorMessage = '';
   FormMode _formMode = FormMode.LOGIN;
 
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
-  TextEditingController _passwordVerificationController = TextEditingController();
+  TextEditingController _passwordVerificationController =
+      TextEditingController();
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _success;
-
 
   void _changeFormToSignUp() {
     _formKey.currentState.reset();
@@ -78,23 +76,8 @@ class _LoginPageState extends State<LoginPage> {
     });
   }
 
-
-
-//  Widget _showCircularProgress() {
-//    if (_isLoading) {
-//      return Center(child: CircularProgressIndicator());
-//    }
-//    return Container(
-//      height: 0.0,
-//      width: 0.0,
-//    );
-//  }
-
-
-
   @override
   void initState() {
-
     super.initState();
   }
 
@@ -106,8 +89,8 @@ class _LoginPageState extends State<LoginPage> {
           child: DropdownButton<String>(
             value: dropDownValue,
             items:
-            languages // from languages.dart -> the list of languages the app supports
-                .map<DropdownMenuItem<String>>((String value) {
+                languages // from languages.dart -> the list of languages the app supports
+                    .map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(
@@ -156,41 +139,57 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-
   // Example code of how to sign in with email and password.
   void _signInWithEmailAndPassword() async {
-    final FirebaseUser user = await widget.auth.signInWithEmailAndPassword(
-      email: _emailController.text,
-      password: _passwordController.text,
-    );
-    if (user != null) {
+    try {
+      final FirebaseUser user = await widget.auth.signInWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      if (user != null) {
+        setState(() {
+          _success = true;
+          _email = user.email;
+          Navigator.of(context)
+              .pushNamedAndRemoveUntil('/feed', (context) => false);
+        });
+      } else {
+        _success = false;
+      }
+    } on Exception catch (e) {
+      List<String> _errors = e.toString().split(',');
+      int _errorNumber = 1;
       setState(() {
-        _success = true;
-        _email = user.email;
-        Navigator.of(context).pushNamedAndRemoveUntil('/feed', (context) => false);
+        _errorMessage = _errors[_errorNumber].trim();
       });
-    } else {
-      _success = false;
     }
   }
-
 
   void _register() async {
-    final FirebaseUser user = await widget.auth.createUserWithEmailAndPassword(
-      email: _emailController.text,
-      password: _passwordController.text,
-    );
-    if (user != null) {
+    try {
+      final FirebaseUser user =
+          await widget.auth.createUserWithEmailAndPassword(
+        email: _emailController.text,
+        password: _passwordController.text,
+      );
+      if (user != null) {
+        setState(() {
+          _success = true;
+          _email = user.email;
+          user.sendEmailVerification();
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => Feed()));
+        });
+      } else {
+        _success = false;
+      }
+    } on Exception catch (e) {
+
       setState(() {
-        _success = true;
-        _email = user.email;
-        Navigator.push(context, MaterialPageRoute(builder: (context) => Feed()));
+        _errorMessage = formatError(e.toString());
       });
-    } else {
-      _success = false;
     }
   }
-
 
 //////////////////////////////////////////////////////////////////////////////// SIGN IN FORM
   Widget SignInForm() {
@@ -211,7 +210,7 @@ class _LoginPageState extends State<LoginPage> {
             maxLines: 1,
             keyboardType: TextInputType.emailAddress,
             validator: (value) =>
-            value.isEmpty ? 'Please enter a username' : null,
+                value.isEmpty ? 'Please enter a username' : null,
             onSaved: (value) => _email = value,
           ),
           SizedBox(
@@ -229,32 +228,30 @@ class _LoginPageState extends State<LoginPage> {
               border: OutlineInputBorder(),
             ),
             validator: (value) =>
-            value.isEmpty ? 'Please enter a password' : null,
+                value.isEmpty ? 'Please enter a password' : null,
             onSaved: (value) => _password = value,
           ),
-
           Padding(
             padding: EdgeInsets.only(top: 16.0),
             child: _formMode == FormMode.SIGNUP
-              ? TextFormField(
-                  obscureText: true,
-                  maxLines: 1,
-                  decoration: InputDecoration(
-                    // PASSWORD VERIFICATION
-                    hintText: 'Verify Password',
-                    fillColor: Colors.grey[200],
-                    filled: true,
-                    border: OutlineInputBorder(),
-                  ),
-                  validator: (value) =>
-                  value != _passwordController.text ? 'Passwords do not match.' : null,
-                  onSaved: (value) => _password = value,
-            )
-              : null,
+                ? TextFormField(
+                    obscureText: true,
+                    maxLines: 1,
+                    decoration: InputDecoration(
+                      // PASSWORD VERIFICATION
+                      hintText: 'Verify Password',
+                      fillColor: Colors.grey[200],
+                      filled: true,
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (value) => value != _passwordController.text
+                        ? 'Passwords do not match.'
+                        : null,
+                    onSaved: (value) => _password = value,
+                  )
+                : null,
           ),
-
           _showErrorMessage(),
-
           SizedBox(
             height: 16.0,
           ),
@@ -263,24 +260,25 @@ class _LoginPageState extends State<LoginPage> {
             color: Colors.blue,
             child: _formMode == FormMode.LOGIN
                 ? Text(
-              'Log In',
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            )
+                    'Log In',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  )
                 : Text(
-              'Sign Up',
-              style: TextStyle(
-                color: Colors.white,
-              ),
-            ),
+                    'Sign Up',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
             onPressed: () async {
               if (_formKey.currentState.validate()) {
-                _formMode == FormMode.LOGIN ? _signInWithEmailAndPassword() : _register();
+                _formMode == FormMode.LOGIN
+                    ? _signInWithEmailAndPassword()
+                    : _register();
               }
             },
           ),
-
           Container(
             alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -288,12 +286,11 @@ class _LoginPageState extends State<LoginPage> {
               _success == null
                   ? ''
                   : (_success
-                  ? 'Successfully signed in ' + _email
-                  : 'Sign in failed'),
+                      ? 'Successfully signed in ' + _email
+                      : 'Sign in failed'),
               style: TextStyle(color: Colors.red),
             ),
           ),
-
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -314,7 +311,8 @@ class _LoginPageState extends State<LoginPage> {
                     fontSize: 11.0,
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () => Navigator.push(context,
+                    MaterialPageRoute(builder: (context) => ForgotPassword(auth: widget.auth,))),
               ),
             ],
           ),
@@ -356,8 +354,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -383,35 +379,34 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                   child: _formMode == FormMode.LOGIN
                       ? Text(
-                    'Don\'t  have an account?',
-                    style: TextStyle(
-                      fontSize: 10.0,
-                    ),
-                  )
+                          'Don\'t  have an account?',
+                          style: TextStyle(
+                            fontSize: 10.0,
+                          ),
+                        )
                       : Text(
-                    'Have an account?',
-                    style: TextStyle(
-                      fontSize: 10.0,
-                    ),
-                  ),
+                          'Have an account?',
+                          style: TextStyle(
+                            fontSize: 10.0,
+                          ),
+                        ),
                 ),
-
                 FlatButton(
                   child: _formMode == FormMode.LOGIN
                       ? Text(
-                    'Sign Up',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 10.0,
-                    ),
-                  )
+                          'Sign Up',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 10.0,
+                          ),
+                        )
                       : Text(
-                    'Sign In',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 10.0,
-                    ),
-                  ),
+                          'Sign In',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 10.0,
+                          ),
+                        ),
                   onPressed: _formMode == FormMode.LOGIN
                       ? _changeFormToSignUp
                       : _changeFormToLogin,
