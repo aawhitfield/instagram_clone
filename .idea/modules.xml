@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/9b Firebase Auth Example.iml" filepath="$PROJECT_DIR$/.idea/9b Firebase Auth Example.iml" />
+      <module fileurl="file://$PROJECT_DIR$/9 Instagram Clone.iml" filepath="$PROJECT_DIR$/9 Instagram Clone.iml" />
+      <module fileurl="file://$PROJECT_DIR$/android/app/src/main/main.iml" filepath="$PROJECT_DIR$/android/app/src/main/main.iml" />
     </modules>
   </component>
 </project>
