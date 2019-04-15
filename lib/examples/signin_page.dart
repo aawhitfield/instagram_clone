@@ -273,7 +273,7 @@ class _EmailLinkSignInSectionState extends State<_EmailLinkSignInSection>
       email: _userEmail,
       url: '<Url with domain from your Firebase project>',
       handleCodeInApp: true,
-      iOSBundleID: 'us.binarychaos.firebase_auth',
+      iOSBundleID: 'us.binarychaos.firebase-auth',
       androidPackageName: 'us.binarychaos.firebase_auth',
       androidInstallIfNotAvailable: true,
       androidMinimumVersion: "1",
