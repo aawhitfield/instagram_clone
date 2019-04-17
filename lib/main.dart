@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_auth_example/ui/screens/feed.dart';
+import 'package:firebase_auth_example/ui/screens/home.dart';
 import 'package:firebase_auth_example/ui/screens/login.dart';
+import 'package:firebase_auth_example/ui/screens/waiting.dart';
 
 void main() => runApp(MyApp());
 
@@ -14,8 +15,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Instagram Clone',
       theme: ThemeData(
-
-        primarySwatch: Colors.blue,
+        iconTheme: IconThemeData(
+          color: Colors.black,
+        ),
 
       ),
       home: _handleCurrentScreen(),
@@ -29,10 +31,10 @@ Widget _handleCurrentScreen() {
       stream: FirebaseAuth.instance.onAuthStateChanged,
       builder: (BuildContext context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return new Center(child: new CircularProgressIndicator());
+          return Waiting();
         } else {
           if (snapshot.hasData) {
-            return Feed(auth: auth,);
+            return Navigation(auth: auth,);
           }
           return LoginPage(auth: auth,);
         }

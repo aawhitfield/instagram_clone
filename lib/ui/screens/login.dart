@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth_example/data/languages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'feed.dart';
 import 'forgot_password.dart';
 import 'package:firebase_auth_example/utils/messages.dart';
 
@@ -150,8 +148,6 @@ class _LoginPageState extends State<LoginPage> {
         setState(() {
           _success = true;
           _email = user.email;
-          Navigator.of(context)
-              .pushNamedAndRemoveUntil('/feed', (context) => false);
         });
       } else {
         _success = false;
@@ -177,8 +173,6 @@ class _LoginPageState extends State<LoginPage> {
           _success = true;
           _email = user.email;
           user.sendEmailVerification();
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => Feed()));
         });
       } else {
         _success = false;
