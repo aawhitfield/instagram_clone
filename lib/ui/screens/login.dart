@@ -3,6 +3,7 @@ import 'package:firebase_auth_example/data/languages.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'forgot_password.dart';
 import 'package:firebase_auth_example/utils/messages.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 enum FormMode { LOGIN, SIGNUP }
 
@@ -173,6 +174,14 @@ class _LoginPageState extends State<LoginPage> {
           _success = true;
           _email = user.email;
           user.sendEmailVerification();
+          Firestore.instance.runTransaction((Transaction transaction) async {
+
+            DocumentReference _newUser = Firestore.instance.collection('users').document(user.uid);
+
+            await _newUser.setData({"email": user.email, "id": user.uid});
+            await _newUser.collection('cards').add({"url" : "https://images.unsplash.com/photo-1555411093-7440ae076e89?ixlib=rb-1.2.1&auto=format&fit=crop&w=1650&q=80"});
+
+          });
         });
       } else {
         _success = false;

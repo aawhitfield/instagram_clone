@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'feed.dart';
 import 'user_profile.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Navigation extends StatefulWidget
 {
   final FirebaseAuth auth;
   final VoidCallback onSignedOut;
-  final String userId;
 
-  Navigation({this.auth, this.onSignedOut, this.userId});
+  Navigation({this.auth, this.onSignedOut});
 
   @override
   _NavigationState createState() => _NavigationState();

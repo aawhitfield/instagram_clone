@@ -27,6 +27,7 @@ class MyApp extends StatelessWidget {
 }
 
 Widget _handleCurrentScreen() {
+
   return new StreamBuilder<FirebaseUser>(
       stream: FirebaseAuth.instance.onAuthStateChanged,
       builder: (BuildContext context, snapshot) {
