@@ -43,10 +43,10 @@ class _FeedState extends State<Feed> {
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: Icon(
-                Icons.camera_alt,
-                color: Colors.black,
+                  Icons.camera_alt,
+                  color: Colors.black,
+                ),
               ),
-            ),
             Text(
               'Instagram',
               style: TextStyle(
@@ -57,6 +57,22 @@ class _FeedState extends State<Feed> {
             ),
           ],
         ),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(
+              Icons.live_tv,
+              color: Colors.black,
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Icon(
+              Icons.send,
+              color: Colors.black,
+            ),
+          ),
+        ],
       ),
       body: StreamBuilder(
           stream: Firestore.instance
@@ -123,13 +139,22 @@ class _FireStoreListViewState extends State<FireStoreListView> {
     String url = "https://randomuser.me/api/?results=" + '$size';
 
     var response = await http.get(url);
-    Map<String, dynamic> data = jsonDecode(response.body);
+    Map<String, dynamic> data = await jsonDecode(response.body);
+
     for (int i = 0; i < size; i++) {
       String _name = data['results'][i]['login']['username'];
-      String _picture = data['results'][i]['picture']['thumbnail'];
-      String _city = ReCase(data['results'][i]['location']['city'].toString()).titleCase;
-      String _state = ReCase(data['results'][i]['location']['state'].toString()).titleCase;
-      Story story = new Story(userName: _name, imageURL: _picture, city: _city, state: _state);
+      String _picture = data['results'][i]['picture']['medium'];
+      String _city =
+          ReCase(data['results'][i]['location']['city'].toString()).titleCase;
+      String _state =
+          ReCase(data['results'][i]['location']['state'].toString()).titleCase;
+
+      Story story = new Story(
+        userName: _name,
+        imageURL: _picture,
+        city: _city,
+        state: _state,
+      );
 
       stories.add(story);
     }
@@ -150,37 +175,45 @@ class _FireStoreListViewState extends State<FireStoreListView> {
                 backgroundColor: Colors.transparent,
               ),
               title: Text(
-                    stories[index].userName,
-                    style: TextStyle(
-                      fontSize: 13.0,
-                    ),
-                  ),
+                stories[index].userName,
+                style: TextStyle(
+                  fontSize: 13.0,
+                ),
+              ),
               subtitle: Text(
                 stories[index].city + ', ' + stories[index].state,
                 style: TextStyle(
                   fontSize: 11.0,
                 ),
               ),
-              trailing: GestureDetector(
-                onTap: () {
-                },
-                child: Icon(Icons.more_vert,
-
+              trailing: IconButton(
+                icon: Icon(
+                  Icons.more_vert,
                 ),
+                onPressed: _showOptions,
               ),
             ),
             Center(
-              child: Image.network(widget.documents[index].data['url'].toString(),
-                height: 350.0,
+              child: Container(
+                child: Image.network(
+                  widget.documents[index].data['url'].toString(),
+                  height: 300.0,
+                  width: double.infinity,
+                  fit: BoxFit.fitWidth,
+                ),
               ),
             ),
             ListTile(
               leading: Row(
                 children: <Widget>[
                   Icon(Icons.favorite_border),
-                  SizedBox(width: 16.0,),
+                  SizedBox(
+                    width: 16.0,
+                  ),
                   Icon(Icons.chat_bubble_outline),
-                  SizedBox(width: 16.0,),
+                  SizedBox(
+                    width: 16.0,
+                  ),
                   Icon(Icons.send),
                 ],
               ),
@@ -196,12 +229,47 @@ class _FireStoreListViewState extends State<FireStoreListView> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Text(stories[index].userName,
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+              child: Text(
+                stories[index].userName,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                 ),
                 textAlign: TextAlign.left,
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(top: 8.0, left: 8.0, right: 8.0),
+              child: Text(
+                  'Take up one idea. Make that one idea your life - think of it, '
+                  'dream of it, live on that idea. Let the brain, muscles, nerves, '
+                  'every part of your body, be full of that idea, and just leave '
+                  'every other idea alone. This is the way to success.'),
+            ),
+            ListTile(
+              leading: CircleAvatar(
+                radius: 15.0,
+                backgroundImage: NetworkImage(
+                    'https://pbs.twimg.com/profile_images/1010928229471809536/beEVHdnf_400x400.jpg'),
+              ),
+              title: TextField(
+                keyboardType: TextInputType.multiline,
+                maxLines: null,
+                decoration: InputDecoration.collapsed(
+                    hintText: 'Enter a comment...',
+                    hintStyle: TextStyle(
+                      fontSize: 12.0,
+                    )),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 8.0, top: 0.0, bottom: 16.0),
+              child: Text(
+                '15 minutes ago',
+                style: TextStyle(
+                  fontSize: 11.0,
+                  color: Colors.grey[500],
+                ),
               ),
             ),
           ],
@@ -269,5 +337,38 @@ class _FireStoreListViewState extends State<FireStoreListView> {
                   return InstagramCard(index);
                 });
         });
+  }
+
+  void _showOptions() async {
+    showDialog(
+        barrierDismissible: true,
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            children: <Widget>[
+              SimpleDialogOption(
+                child: Text('Share Link...'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              SimpleDialogOption(
+                child: Text('Report...'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              SimpleDialogOption(
+                child: Text('Turn On Post Notifications...'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              SimpleDialogOption(
+                child: Text('Unfollow...'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+              SimpleDialogOption(
+                child: Text('Mute...'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          );
+        }
+    );
   }
 }
