@@ -21,7 +21,12 @@ dev_dependencies:
 flutter:
   uses-material-design: true
 
+  assets:
+      - assets/me.jpg
+
   fonts:
   - family: Amarillo
     fonts:
     - asset: lib/fonts/Amarillo.ttf
+
+

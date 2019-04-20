@@ -21,6 +21,143 @@ class _UserProfileState extends State<UserProfile> {
       return _email;
     }
 
+
+    Widget _buildHeader() {
+
+      return Row(
+        children: <Widget>[
+          Container(
+            width: 90.0,
+            height: 100.0,
+            child: Align(
+              alignment: Alignment(-1, 0),
+              child: Stack(
+                overflow: Overflow.visible,
+                children: <Widget>[
+                  CircleAvatar(
+                    backgroundImage: AssetImage('assets/me.jpg'),
+                    radius: 40.0,
+                  ),
+                  Positioned(
+                    top: 50.0,
+                    left: 60.0,
+                    right: 0.0,
+                    child: RawMaterialButton(
+                      onPressed: () {},
+                      child: new Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 20.0,
+                      ),
+                      shape: new CircleBorder(),
+                      elevation: 2.0,
+                      fillColor: Colors.blue,
+                      padding: const EdgeInsets.all(0.0),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          Expanded(
+            child: Column(
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    Column(
+                      children: <Widget>[
+                        Text('176',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 4.0,),
+                        Text('Posts',
+                          style: TextStyle(
+                            fontSize: 12.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column(
+                      children: <Widget>[
+                        Text('520',
+                          style: TextStyle(
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(height: 4.0,),
+                        Text('Followers',
+                          style: TextStyle(
+                            fontSize: 12.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Column( children: <Widget>[
+                      Text('470',
+                        style: TextStyle(
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 4.0,),
+                      Text('Following',
+                        style: TextStyle(
+                          fontSize: 12.0,
+                        ),
+                      ),
+                    ],),
+                  ],
+                ),
+                SizedBox(height: 8.0,),
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: RaisedButton(
+                        color: Colors.white,
+                        child: Text(' Edit Profile'),
+                        onPressed: () {},
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
+
+
+
+
+
+    Widget _buildBody() {
+
+      return Column(
+        children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: _buildHeader(),
+          ),
+        ],
+      );
+    }
+
+
+
+
+
+
+
     return FutureBuilder<Object>(
         future: _getEmail(),
         builder: (context, snapshot) {
@@ -97,9 +234,7 @@ class _UserProfileState extends State<UserProfile> {
                 ],
               ),
             ),
-            body: Center(
-              child: Text('User Accounts'),
-            ),
+            body: _buildBody()
           );
         });
   }
