@@ -26,7 +26,7 @@ class InstagramGrid extends StatelessWidget {
         future: _getPhotos(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           } else {
             return GridView.count(
                 crossAxisCount: 3,

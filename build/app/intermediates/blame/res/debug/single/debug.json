@@ -228,6 +228,10 @@
         "source": "C:\\Users\\aawhi\\.gradle\\caches\\transforms-1\\files-1.1\\jetified-play-services-base-16.0.1.aar\\70e263d234236545a8d09f7bc519a2a4\\res\\drawable-xhdpi-v4\\common_google_signin_btn_icon_light_normal_background.9.png"
     },
     {
+        "merged": "C:\\Users\\aawhi\\Documents\\Practice Apps\\9 Instagram Clone\\build\\app\\intermediates\\res\\merged\\debug\\xml_flutter_image_picker_file_paths.xml.flat",
+        "source": "C:\\Users\\aawhi\\Documents\\Practice Apps\\9 Instagram Clone\\build\\image_picker\\intermediates\\packaged_res\\debug\\xml\\flutter_image_picker_file_paths.xml"
+    },
+    {
         "merged": "C:\\Users\\aawhi\\Documents\\Practice Apps\\9 Instagram Clone\\build\\app\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4_notification_bg_low_normal.9.png.flat",
         "source": "C:\\Users\\aawhi\\.gradle\\caches\\transforms-1\\files-1.1\\core-1.0.0.aar\\581b93c599052a8eb4dad0d1261cc4d0\\res\\drawable-mdpi-v4\\notification_bg_low_normal.9.png"
     },
