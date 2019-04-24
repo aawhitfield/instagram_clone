@@ -6,6 +6,22 @@ import 'dart:convert';
 import 'package:recase/recase.dart';
 import 'dart:math';
 
+//import 'package:flare_flutter/asset_bundle_cache.dart';
+//import 'package:flare_flutter/cache.dart';
+//import 'package:flare_flutter/cache_asset.dart';
+//import 'package:flare_flutter/flare.dart';
+//import 'package:flare_flutter/flare_actor.dart';
+//import 'package:flare_flutter/flare_cache.dart';
+//import 'package:flare_flutter/flare_cache_asset.dart';
+//import 'package:flare_flutter/flare_controller.dart';
+//import 'package:flare_flutter/flare_controls.dart';
+//import 'package:flare_flutter/flare_render_box.dart';
+
+import 'package:flare_flutter/flare_actor.dart';
+import 'package:flare_flutter/flare_controls.dart';
+
+final FlareControls flareControls = FlareControls();
+
 class Feed extends StatefulWidget {
   final FirebaseAuth auth;
   final VoidCallback onSignedOut;
@@ -43,10 +59,10 @@ class _FeedState extends State<Feed> {
             Padding(
               padding: const EdgeInsets.only(right: 16.0),
               child: Icon(
-                  Icons.camera_alt,
-                  color: Colors.black,
-                ),
+                Icons.camera_alt,
+                color: Colors.black,
               ),
+            ),
             Text(
               'Instagram',
               style: TextStyle(
@@ -135,6 +151,7 @@ class FireStoreListView extends StatefulWidget {
 class _FireStoreListViewState extends State<FireStoreListView> {
   List<Story> stories = <Story>[];
 
+
   Future<List<Story>> _getStories(int size) async {
     String url = "https://randomuser.me/api/?results=" + '$size';
 
@@ -193,14 +210,42 @@ class _FireStoreListViewState extends State<FireStoreListView> {
                 onPressed: _showOptions,
               ),
             ),
+
             Center(
-              child: Container(
-                child: Image.network(
-                  widget.documents[index].data['url'].toString(),
-                  height: 300.0,
-                  width: double.infinity,
-                  fit: BoxFit.fitWidth,
-                ),
+              child: Stack(
+                children: <Widget>[
+                  Align(
+                    child: Container(
+                      child: Image.network(
+                        widget.documents[index].data['url'].toString(),
+                        height: 300.0,
+                        width: double.infinity,
+                        fit: BoxFit.fitWidth,
+                      ),
+                    ),
+                  ),
+                  Align(
+                    child: GestureDetector(
+                      onDoubleTap: () {
+                        flareControls.play('like');
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: 250,
+                        child: Center(
+                          child: SizedBox(
+                            width: 80,
+                            height: 80,
+                            child: FlareActor('assets/instagram_like.flr',
+                              controller: flareControls,
+                              animation: 'idle',
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             ListTile(
@@ -368,7 +413,6 @@ class _FireStoreListViewState extends State<FireStoreListView> {
               ),
             ],
           );
-        }
-    );
+        });
   }
 }

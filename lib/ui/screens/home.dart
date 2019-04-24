@@ -12,6 +12,7 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'favorites.dart';
 
 
 class Navigation extends StatefulWidget
@@ -48,7 +49,7 @@ class NavigationState extends State<Navigation> {
       Feed(auth: widget.auth),
       Text('Search'),
       AddWidget(parent: this,),
-      Text('Favorites'),
+      Favorites(auth: widget.auth,),
       UserProfile(auth: widget.auth,),
     ];
   }
