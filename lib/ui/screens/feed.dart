@@ -101,6 +101,7 @@ class _FeedState extends State<Feed> {
             if (!snapshot.hasData) return CircularProgressIndicator();
             return FireStoreListView(
               documents: snapshot.data.documents,
+              auth: widget.auth,
             );
           }),
     );
@@ -141,8 +142,9 @@ class Story {
 
 class FireStoreListView extends StatefulWidget {
   final List<DocumentSnapshot> documents;
+  final FirebaseAuth auth;
 
-  FireStoreListView({this.documents});
+  FireStoreListView({this.documents, this.auth});
 
   @override
   _FireStoreListViewState createState() => _FireStoreListViewState();
@@ -150,7 +152,7 @@ class FireStoreListView extends StatefulWidget {
 
 class _FireStoreListViewState extends State<FireStoreListView> {
   List<Story> stories = <Story>[];
-
+  static final double containerSize = 20.0;
 
   Future<List<Story>> _getStories(int size) async {
     String url = "https://randomuser.me/api/?results=" + '$size';
@@ -210,48 +212,41 @@ class _FireStoreListViewState extends State<FireStoreListView> {
                 onPressed: _showOptions,
               ),
             ),
+            GestureDetector(
+              onDoubleTap: () async {
+                Firestore.instance.runTransaction((Transaction transaction) async {
+                  DocumentSnapshot snapshot = await transaction.get(widget.documents[index].reference);
 
-            Center(
-              child: Stack(
-                children: <Widget>[
-                  Align(
-                    child: Container(
-                      child: Image.network(
-                        widget.documents[index].data['url'].toString(),
-                        height: 300.0,
-                        width: double.infinity,
-                        fit: BoxFit.fitWidth,
-                      ),
-                    ),
+                  await transaction.update(snapshot.reference, {'isFav': !(widget.documents[index].data['isFav'])});
+                });
+              },
+              child: Center(
+                child: Container(
+                  child: Image.network(
+                    widget.documents[index].data['url'].toString(),
+                    height: 300.0,
+                    width: double.infinity,
+                    fit: BoxFit.fitWidth,
                   ),
-                  Align(
-                    child: GestureDetector(
-                      onDoubleTap: () {
-                        flareControls.play('like');
-                      },
-                      child: Container(
-                        width: double.infinity,
-                        height: 250,
-                        child: Center(
-                          child: SizedBox(
-                            width: 80,
-                            height: 80,
-                            child: FlareActor('assets/instagram_like.flr',
-                              controller: flareControls,
-                              animation: 'idle',
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
             ListTile(
               leading: Row(
                 children: <Widget>[
-                  Icon(Icons.favorite_border),
+                  //Icon(Icons.favorite_border),
+                  Container(
+                    margin: EdgeInsets.only(right: 10),
+                    width: containerSize,
+                    height: containerSize,
+                    child: FlareActor("assets/Favorite.flr",
+                        shouldClip: false,
+                        // Play the animation depending on the state.
+                        animation: widget.documents[index].data['isFav']
+                            ? "Favorite"
+                            : "Unfavorite" //_animationName
+                        ),
+                  ),
                   SizedBox(
                     width: 16.0,
                   ),

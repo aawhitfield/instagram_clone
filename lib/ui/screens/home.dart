@@ -15,6 +15,7 @@ import 'package:path_provider/path_provider.dart';
 import 'favorites.dart';
 
 
+
 class Navigation extends StatefulWidget
 {
   final FirebaseAuth auth;
@@ -188,7 +189,7 @@ class NavigationState extends State<Navigation> {
       Firestore.instance.runTransaction((Transaction transaction) async {
         DocumentReference _newPhoto = Firestore.instance.collection('users').document(user.uid);
 
-        await _newPhoto.collection('cards').add({"url" : url});
+        await _newPhoto.collection('cards').add({"url" : url, "isFav" : false});
 
       });
   }
